@@ -20,6 +20,10 @@ class SP_BDD extends SP{
     }
 /********************************************************************************************************************************************************/
 /******************************les fonctions utiles pour sheet global************************************************************************************************/
+/*
+* obj: object contenant en clé la donnée à rechercher, en valeur la valeur recherchée
+* label: la valeur de retour désirée
+*/
 /********************************************************************************************************************************************************/
     _getUrl(obj){   return this._get_(obj,"url")    }
     _getManager(obj){   return this._get_(obj,"manager")    }
@@ -30,10 +34,12 @@ class SP_BDD extends SP{
     _get_(obj, label){
       var arr = []
       for(a in this.global.clients)if(this.global.clients.hasOwnProperty(a))
-        for(aa in obj)if(obj.hasOwnProperty(a)){
-          if(this.global.clients[a][aa] == obj[aa])
-            arr.push({response: this.global.clients[a][label], request: obj[aa], requestedKey: aa, client: a})
-        }
+        for(aa in obj)if(obj.hasOwnProperty(aa))
+          if(aa == label)return throw "Le label entré ne peut etre recherché dans cette fonction"
+          else{
+            if(this.global.clients[a][aa] == obj[aa])
+              arr.push({response: this.global.clients[a][label], request: obj[aa], requestedKey: aa, client: a})
+          }
       return arr
     }
 /********************************************************************************************************************************************************/
@@ -105,17 +111,17 @@ class SP_BDD extends SP{
     var global = sp.getSheetByName('global')
     var people = sp.getSheetByName('people')
     var email = sp.getSheetByName('Email')
-    var Object = {}
+    var o = {}
 
-    Object.global_ = global.getRange(2,1,global.getLastRow(),global.getLastColumn())
-    Object.global = {clients: {}, managers: {}, ga: {}, seo: {}, ads: {}, budgetFixe: {}, gmc: {}, goalsCA: {}, goalsGA: {}}
-    //Object.people_ = people.getRange(1,1,people.getLastRow(),people.getLastColumn()).getValues()
-    //Object.people = {employer: {}, employers: {}, global: {}, ads: {}, seo: {}}
+    o.global_ = global.getRange(2,1,global.getLastRow(),global.getLastColumn())
+    o.global = {clients: {}, managers: {}, ga: {}, seo: {}, ads: {}, budgetFixe: {}, gmc: {}, goalsCA: {}, goalsGA: {}}
+    //o.people_ = people.getRange(1,1,people.getLastRow(),people.getLastColumn()).getValues()
+    //o.people = {employer: {}, employers: {}, global: {}, ads: {}, seo: {}}
 
   /********************************************************************************************************************************************************/
     var headers = []
-    tmpbis = Object.global_.getValues()
-    cpt = Object.global
+    tmpbis = o.global_.getValues()
+    cpt = o.global
     for(var a in tmpbis)if(obj.hasOwnProperty(a))if(a==0){
         headers = tmpbis[a]
       }else{
@@ -155,8 +161,8 @@ class SP_BDD extends SP{
         }
       }
   /********************************************************************************************************************************************************//*
-    tmpbis = Object.people_
-    cpt = Object.people
+    tmpbis = o.people_
+    cpt = o.people
     for(var a in tmpbis){
       tmp = tmpbis[a]
       cpt.employers[tmp[2]+" "+tmp[1]] = tmp
@@ -173,8 +179,8 @@ class SP_BDD extends SP{
     }
   /********************************************************************************************************************************************************/
     Logger.log('ok')
-    this._.global = Object.global_
-    return Object.global
+    //this._.global = o.global_
+    return o.global
 
 
   }
