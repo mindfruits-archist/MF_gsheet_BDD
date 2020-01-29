@@ -1,4 +1,8 @@
-var a =  new SP("1BXXPAHb6qlyKj_zUyhtZAaVuUppI8nffxB9E5OW0Iss")
-function ok(){
-  Logger.log(a.data)
+class Code{
+  constructor(){
+    this.utils = new Utils()
+    this.prototypes = new Prototypes()
+    this.sp = new SP()
+    this.bdd = new SP_BDD()
+  }
 }

@@ -96,6 +96,17 @@ var SP = function () {
       return [0, "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"].indexOf(range);
     }
   }, {
+    key: "changeSheet",
+    value: function changeSheet(obj) {
+      var name, sp;
+      if (typeof obj == "string") name = obj;else if (this.__isObject(obj)) {
+        this.__isObjectArgOk(sh, ["name"]);
+        name = obj.name;
+        if (_typeof(obj.sp)) sp = this.spsh(obj.sp);
+      }
+      if (typeof sp == "undefnied") this.sh = this._[name];else throw "SP::changeSheet => la fonction est à compléter, elle ne permet permet pas encore de récupérer un sh sur une autre sp";
+    }
+  }, {
     key: "getSheets__",
     value: function getSheets__(sp) {
       return "arguments: spreadsheet";
@@ -120,6 +131,25 @@ var SP = function () {
     key: "getObj",
     value: function getObj(sh) {
       return getObjectlike(sh);
+    }
+  }, {
+    key: "getSheetValues",
+    value: function getSheetValues(o) {
+      var a,
+          tmp = [],
+          vals,
+          sh = typeof o.sheet == 'string' ? this._[o.sheet] : o.sheet;
+      var fr = o.fr || 1,
+          fc = o.fc || 1,
+          nbr = o.nbr || sh.getLastRow() - (fr - 1),
+          nbc = o.nbc || sh.getLastColumn() - (fc - 1);
+      var reduce = o.reduce || false;
+      vals = sh.getRange(fr, fc, nbr, nbc).getValues();
+      if (vals.length == 1 && reduce) tmp = vals[0];
+      if (vals[0].length == 1 && reduce) for (a in vals) {
+        tmp.push(vals[a][0]);
+      }if (tmp.length != 0) return tmp;
+      return vals;
     }
   }, {
     key: "getObjectlike",
@@ -308,15 +338,34 @@ var SP = function () {
     }
   }, {
     key: "email_MF",
-    value: function email_MF(contact, body) {
+    value: function email_MF(obj) {
+      if (!this.__isObject(obj)) throw "SP::email_MF => l'argument doit etre un objt JSON, typeof obj= " + (typeof obj === "undefined" ? "undefined" : _typeof(obj));
+      this.__isObjectArgOk(sh, ["contact", "body", "subject"]);
+      var contacts = obj.contacts || [obj.contact],
+          body = obj.body,
+          title = obj.subject;
       var template = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"><title>Template d'emails Mindfruits</title><style> .mainDiv{font-family: Raleway, sans-serif;text-align:center;margin: 10px auto;width: 95%;max-width: 700px;font-size: 18px;background-color:#f8f8f8;padding: 5% 5%; border:2px #f0efef solid;} .mainDiv>img{margin:auto;display: block;margin-bottom:30px;} .btn{background-color: rgb(163, 204, 110); border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;border-radius:4px;font-weight:bold;text-transform:uppercase;} </style></head><body><div class=\"mainDiv\"><img src=\"https://www.mindfruits.biz/wp-content/uploads/2017/06/mindfruits.png\"></div><p style=\"text-align:center;\">Votre fid\xE8le serviteur,<br>Google Apps Script</p></body></html>";
+      template.replace("{{content}}", body);
 
-      for (var a in emails) {
+      for (var a in contacts) {
         MailApp.sendEmail({
-          to: emails[a],
-          subject: "[SCRIPT BDD " + period + "] Evolution checker (CA et GAGoals) de nos clients | " + date,
+          to: contacts[a],
+          subject: subject,
           htmlBody: template
         });
+      }
+    }
+  }, {
+    key: "launchScriptUi",
+    value: function launchScriptUi(o) {
+      if (!this.__isObject(o)) throw "SP::email_MF => l'argument doit etre un objt JSON, typeof obj= " + (typeof obj === "undefined" ? "undefined" : _typeof(obj));
+      this.__isObjectArgOk(sh, ["func"]);
+      var ui = SpreadsheetApp.getUi();
+      var result = ui.alert('Lancer le script ?', '"ok" pour lancer, "cancel" pour annuler', ui.ButtonSet.OK_CANCEL);
+      if (result == ui.Button.OK) {
+        eval(o.func + '()');
+      } else if (result == ui.Button.CANCEL || result == ui.Button.CLOSE) {
+        ui.alert("Aucune fonction n'a pas été lancé");
       }
     }
   }]);

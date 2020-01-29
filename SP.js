@@ -87,6 +87,16 @@ class SP {
   }
   getObjectlike__(sp){return"arguments(1||2): spreadsheet||(spreadsheet, position(string||number))"}
   getObj(sh){return getObjectlike(sh)}
+  getSheetValues(o){
+    var a, tmp = [], vals, sh = typeof o.sheet == 'string' ? this._[o.sheet] : o.sheet
+    var fr = o.fr || 1, fc = o.fc || 1, nbr = o.nbr || sh.getLastRow() - (fr-1), nbc = o.nbc || sh.getLastColumn() - (fc-1)
+    var reduce = o.reduce || false
+    vals = sh.getRange(fr, fc, nbr, nbc).getValues()
+    if(vals.length == 1 && reduce)tmp = vals[0]
+    if(vals[0].length == 1 && reduce)for(a in vals)tmp.push(vals[a][0])
+    if(tmp.length!=0)return tmp
+    return vals
+  }
   getObjectlike(sh, pos, action){
     Logger.log("\n\nIL RESTE A POUVOIR RECUPERER UN OBJET MULTIDIMENTIONNEL\n\n")
     var ok = this.__isGoodType({obj: sh.sh, type: 'sh'}), fr = 1, fc = 1, nr, nc, head
@@ -242,5 +252,18 @@ class SP {
         htmlBody: template
       });
   }
-
+  launchScriptUi(o){
+    if(!this.__isObject(o))throw"SP::email_MF => l'argument doit etre un objt JSON, typeof obj= "+typeof obj
+    this.__isObjectArgOk(sh, ["func"]);
+    var ui = SpreadsheetApp.getUi()
+    var result = ui.alert(
+        'Lancer le script ?',
+      '"ok" pour lancer, "cancel" pour annuler',
+        ui.ButtonSet.OK_CANCEL);
+    if (result == ui.Button.OK) {
+      eval(o.func+'()')
+    } else if (result == ui.Button.CANCEL || result == ui.Button.CLOSE) {
+      ui.alert("Aucune fonction n'a pas été lancé");
+    }
+  }
 }
