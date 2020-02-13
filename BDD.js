@@ -57,7 +57,7 @@ class SP_BDD extends SP{
     }
     return o
   }
-  bddpeople(){var t = this._.people;
+  bddpeople(){var a, i, t = this._.people;
     var sh = t.getRange(1,1,t.getLastRow(),t.getLastColumn()).getValues()
     var o = {_: {}}
     o._.globalManagers = []
@@ -89,7 +89,7 @@ class SP_BDD extends SP{
     return o
   }
   bddcontacts(){var t = this._.contacts;
-    var sh = t.getRange(1,1,t.getLastRow(),t.getLastColumn()).getValues()
+    var a, i, sh = t.getRange(1,1,t.getLastRow(),t.getLastColumn()).getValues()
     var o = {_: {}}
     for(a in sh)if(sh.hasOwnProperty(a)){
       var person = sh[a][1]+" "+sh[a][2]
@@ -103,7 +103,7 @@ class SP_BDD extends SP{
   }
 
   bddglobal() {
-    var tmp,tmpbis,cpt,cptbis
+    var i, tmp,tmpbis,cpt,cptbis
   /********************************************************************************************************************************************************/
   /********************************************************************************************************************************************************/
   /********************************************************************************************************************************************************/

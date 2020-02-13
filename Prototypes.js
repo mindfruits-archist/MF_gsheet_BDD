@@ -36,6 +36,14 @@ class Prototypes {
     }
   }
   myDate(){
+    Date.prototype.getMonthLetter = function(d) { //1 - 366
+      var mois = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Décembre"]
+      return arr[d.getMonth()]
+    }
+    Date.prototype.getDayLetter = function(d) { //1 - 366
+      var jour = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"]
+      return arr[d.getDay()]
+    }
     Date.prototype.getYearDay = function() { //1 - 366
     	var year  = this.getFullYear();
     	var month = this.getMonth();

@@ -79,7 +79,7 @@ class SP {
   }
   getSheets__(sp){return"arguments: spreadsheet"}
   getSheets(sp){
-    var ok = this.__isGoodType({obj: sp, type: 'sp'})
+    var a, ok = this.__isGoodType({obj: sp, type: 'sp'})
 
     var shs = sp.getSheets(), o = {}
     for(a in shs)  if(shs.hasOwnProperty(a))o[shs[a].getName()] = shs[a]
